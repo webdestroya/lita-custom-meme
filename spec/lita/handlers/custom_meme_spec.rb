@@ -2,15 +2,23 @@ require "spec_helper"
 
 describe Lita::Handlers::CustomMeme, lita_handler: true do
   before do
-    allow(Lita::Authorization).to receive(:user_in_group?).and_return(true)
+    robot.auth.add_user_to_group!(user, :custom_meme_admins)
   end
 
-  it { routes_command("meme show something").to(:meme_image) }
+  it { is_expected.to route_command("meme show something").to(:meme_image) }
 
-  it { routes_command("meme list").to(:meme_list) }
+  it { is_expected.to route_command("meme list").to(:meme_list) }
 
-  it { routes_command("meme add name http://image.com/img.jpg").to(:meme_add) }
-  it { routes_command("meme delete name").to(:meme_delete) }
+  it do
+    is_expected.to route_command(
+      "meme add name http://image.com/img.jpg"
+    ).to(:meme_add).with_authorization_for(:custom_meme_admins)
+  end
+  it do
+    is_expected.to route_command(
+      "meme delete name"
+    ).to(:meme_delete).with_authorization_for(:custom_meme_admins)
+  end
 
   it 'sets and shows memes' do
     send_command("meme add testing http://blah.com")

@@ -29,9 +29,7 @@ module Lita
         help: {'meme delete NAME' => "Deletes a meme from the list"}
 
 
-      def self.default_config(config)
-        config.command_only = false
-      end
+      config :command_only, types: [true, false], default: false
 
       def meme_image(response)
         # If command only is desired, then bail if general message
@@ -87,10 +85,6 @@ module Lita
       end
 
       private
-
-      def config
-        Lita.config.handlers.custom_meme
-      end
 
       def normalize_key(key)
         key.to_s.downcase.strip
